@@ -3,49 +3,59 @@ import traceback
 import time
 import win32api
 import win32con
+from win32api import GetCursorPos, GetSystemMetrics, SetCursorPos
+import win32gui
+import ctypes
 
 from ok import PostMessageInteraction, Logger
 
 logger = Logger.get_logger(__name__)
 
+class RECT(ctypes.Structure):
+    _fields_ = [("left", ctypes.c_long),
+                ("top", ctypes.c_long),
+                ("right", ctypes.c_long),
+                ("bottom", ctypes.c_long)]
+
 class EfInteraction(PostMessageInteraction):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.cursor_position = None
 
-    # def click(self, x=-1, y=-1, move_back=False, name=None, down_time=0.02, move=True, key="left", block=False):
-    #     self.operate(lambda: self.do_click(x, y, down_time=down_time, key=key), block=block)
+    def send(self, msg, wparam, lparam):
+        win32gui.SendMessage(self.hwnd, msg, wparam, lparam)
 
-    # def send_key(self, key, down_time=0.02, block=False):
-    #     logger.debug(f'EfInteraction send key {key} {down_time}')
-    #     self.operate(lambda: self.do_send_key(key, down_time), block=block)
+    def activate(self):
+        self.send(win32con.WM_ACTIVATE, win32con.WA_ACTIVE, 0)
 
-    # def do_click(self, x=-1, y=-1, move_back=False, name=None, down_time=0.02, move=True, key="left"):
-    #     click_pos = self.make_mouse_position(x, y)
-    #     if key == "left":
-    #         btn_down = win32con.WM_LBUTTONDOWN
-    #         btn_mk = win32con.MK_LBUTTON
-    #         btn_up = win32con.WM_LBUTTONUP
-    #     elif key == "middle":
-    #         btn_down = win32con.WM_MBUTTONDOWN
-    #         btn_mk = win32con.MK_MBUTTON
-    #         btn_up = win32con.WM_MBUTTONUP
-    #     else:
-    #         btn_down = win32con.WM_RBUTTONDOWN
-    #         btn_mk = win32con.MK_RBUTTON
-    #         btn_up = win32con.WM_RBUTTONUP
-    #     self.post(btn_down, btn_mk, click_pos
-    #               )
-    #     time.sleep(down_time)
-    #     self.post(btn_up, 0, click_pos
-    #               )
+    def try_activate(self):
+        if not self.activated:
+            if not self.hwnd_window.is_foreground():
+                self.activated = True
+                self.cursor_position = GetCursorPos()
+                self.activate()
+                time.sleep(0.01)
+        self.try_unclip()
 
-    # def send_key_down(self, key, block=False):
-    #     if not self.hwnd_window.is_foreground():
-    #         self.activate()
-    #     self.post_interaction.send_key_down(key, activate=False)
+    def try_unclip(self):
+        try:
+            # 只有在窗口存在、处于后台且有历史坐标时才进行检查
+            if not self.hwnd_window.is_foreground():
+                rect = RECT()
+                ctypes.windll.user32.GetClipCursor(ctypes.byref(rect))
+                sx, sy = GetSystemMetrics(0), GetSystemMetrics(1)
+                
+                # 检查是否被限制(Clip) 或 发生长距离跳变(>200像素, 可能是游戏强制回中)
+                is_clipped = (rect.right - rect.left) < sx or (rect.bottom - rect.top) < sy
+                # is_jumped = (pos[0] - self.cursor_position[0])**2 + (pos[1] - self.cursor_position[1])**2 > 40000
 
-    # def send_key_up(self, key, block=False):
-    #     if not self.hwnd_window.is_foreground():
-    #         self.activate()
-    #     self.post_interaction.send_key_up(key)
+                if is_clipped:
+                    ctypes.windll.user32.ClipCursor(0)
+                    if self.cursor_position:
+                        SetCursorPos(self.cursor_position)
+                    return  # 恢复位置后直接返回, 不更新mouse_pos
+        except Exception:
+            pass
+        finally:
+            self.cursor_position = None
