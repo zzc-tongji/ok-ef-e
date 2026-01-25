@@ -6,6 +6,7 @@ import win32con
 
 from ok import BaseTask
 
+
 class BaseEfTask(BaseTask):
 
     def __init__(self, *args, **kwargs):
@@ -19,7 +20,7 @@ class BaseEfTask(BaseTask):
         return self.find_one('skip_dialog_confirm', horizontal_variance=0.05, vertical_variance=0.05)
 
     def in_world(self):
-        return self.find_one('top_left_tab')
+        return self.find_one('top_left_tab', horizontal_variance=0.01)
 
     def find_f(self):
         return self.find_one('pick_f', vertical_variance=0.05)
@@ -79,18 +80,15 @@ class BaseEfTask(BaseTask):
                 self.click(login)
                 self.log_info('点击登录按钮!')
                 return False
-            if self.find_boxes(texts, match=re.compile("请重启游戏")):                
+            if self.find_boxes(texts, match=re.compile("请重启游戏")):
                 self.log_info('游戏更新成功, 游戏即将重启')
                 self.click(self.find_boxes(texts, match="确认"))
                 result = self.start_device()
                 self.log_info(f'start_device end {result}')
                 self.sleep(30)
-                return False            
+                return False
             if start := self.find_boxes(texts, boundary='bottom_right', match=["开始游戏", re.compile("进入游戏")]):
                 if not self.find_boxes(texts, boundary='bottom_right', match="登录"):
                     self.click(start)
                     self.log_info(f'点击开始游戏! {start}')
                     return False
-
-
-
