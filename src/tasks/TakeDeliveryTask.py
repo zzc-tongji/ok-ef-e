@@ -26,11 +26,10 @@ class TakeDeliveryTask(BaseEfTask, TriggerTask):
         self.description = "在运送委托列表界面开启,任务按报酬排序,接武陵券需将滚动条拉到底部"
         self.icon = FluentIcon.ACCEPT
         self.default_config = {
-            '_enabled': True,
             '接取谷地券': False,
-            '接取谷地券最低金额': 5.0,
+            '接取谷地券最低金额(万)': 5.0,
             '接取武陵券': True,
-            '接取武陵券最低金额': 5.0
+            '接取武陵券最低金额(万)': 5.0
         }
 
     def process_ocr_results(self, full_texts, filter_min, reward_pattern):
@@ -105,8 +104,8 @@ class TakeDeliveryTask(BaseEfTask, TriggerTask):
         # 读取券种配置
         enable_valley = self.config.get('接取谷地券', False)
         enable_wuling = self.config.get('接取武陵券', True)
-        valley_min = float(self.config.get('接取谷地券最低金额', 5.0))
-        wuling_min = float(self.config.get('接取武陵券最低金额', 5.0))
+        valley_min = float(self.config.get('接取谷地券最低金额(万)', 5.0))
+        wuling_min = float(self.config.get('接取武陵券最低金额(万)', 5.0))
 
         ticket_types = []
         if enable_valley:
@@ -210,16 +209,16 @@ class TakeDeliveryTask(BaseEfTask, TriggerTask):
 
                         # CD已好（或睡醒），执行点击
                         self.log_info(f"执行盲点刷新 (坐标: {int(btn_to_click.x)}, {int(btn_to_click.y)})")
-                        self.click(btn_to_click, after_sleep=0.5, down_time=0.2)
+                        self.click(btn_to_click, move_back=True)
                         self.last_refresh_time = time.time()
                         self.ocr_count_after_click = 0 # 重置计数器
                     else:
                         self.log_info("警告: 尚未定位到刷新按钮位置，无法盲点")
-                        self.sleep(1.0)
+                        time.sleep(1.0)
                         continue
             except Exception as e:
                 self.log_info(f"TakeDeliveryTask error: {e}")
                 if "SetCursorPos" in str(e) or "拒绝访问" in str(e):
                     self.log_info("警告: 检测到权限不足或光标控制失败，请尝试【以管理员身份运行】程序！")
-                self.sleep(2)
+                time.sleep(2)
                 continue
