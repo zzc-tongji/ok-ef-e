@@ -4,6 +4,8 @@ from src.tasks.BaseEfTask import BaseEfTask
 from src.interaction.Mouse import active_and_send_mouse_delta,run_at_window_pos
 import pyautogui
 import re
+on_zip_line_tip = ["移动鼠标", "选择前进目标", "向目标移动", "离开滑索架"]
+on_zip_line_stop = [re.compile(i) for i in on_zip_line_tip]
 class Test(BaseEfTask):
 
     def __init__(self, *args, **kwargs):
@@ -21,12 +23,26 @@ class Test(BaseEfTask):
             if self.in_friend_boat():
                 return True
     def run(self):
+        self.click(after_sleep=0.5)
+        start = time.time()
         while True:
-            results = self.ocr(match=re.compile("90"))
             self.next_frame()
-            if results:
-                self.log_info(f"检测到90，位置{results[0].x}, {results[0].y}")
-            
+            self.send_key("e")
+            self.sleep(0.1)
+            result = self.ocr(
+                match=on_zip_line_stop,
+                box="bottom",
+                log=True,
+            )
+            if result:
+                break
+            if time.time() - start > 60:
+                raise Exception("滑索超时，强制退出")
+        # while True:
+        #     results = self.ocr(match=re.compile("90"))
+        #     self.next_frame()
+        #     if results:
+        #         self.log_info(f"检测到90，位置{results[0].x}, {results[0].y}")
 
         # self.ensure_in_friend_boat()
         # self.active_and_send_mouse_delta(self.hwnd.hwnd, dx=self.width//-2, dy=0, activate=True, only_activate=False, delay=0.2, steps=3)

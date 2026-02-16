@@ -33,41 +33,33 @@ class BaseEfTask(BaseTask):
     def active_and_send_mouse_delta(self, hwnd, dx=1, dy=1, activate=True, only_activate=False, delay=0.02, steps=3):
         return active_and_send_mouse_delta(hwnd, dx, dy, activate, only_activate, delay, steps)
 
-    def isolate_white_yellow_text(frame):
-        """
-        提取 白色 + 黄白色 数字
-        输出：黑字白底（适合OCR）
-        """
-
-        # 转 HSV（游戏UI更稳）
+    def isolate_white_yellow_text(self,frame):
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-        # ===== 白色范围 =====
-        lower_white = np.array([0, 0, 210], dtype=np.uint8)
-        upper_white = np.array([180, 40, 255], dtype=np.uint8)
+        # ===== 白色 =====
+        lower_white = np.array([0, 0, 200], dtype=np.uint8)
+        upper_white = np.array([180, 50, 255], dtype=np.uint8)
 
-        # ===== 黄色 / 金色范围 =====
-        lower_gold1 = np.array([18, 80, 170])
-        upper_gold1 = np.array([40, 255, 255])
-        
-        lower_gold = np.array([18, 120, 180], dtype=np.uint8)
-        upper_gold = np.array([35, 255, 255], dtype=np.uint8)
-        
-        mask_gold1 = cv2.inRange(hsv, lower_gold1, upper_gold1)
+        # ===== 金色（双段）=====
+        lower_gold_strong = np.array([18, 120, 170], dtype=np.uint8)
+        upper_gold_strong = np.array([40, 255, 255], dtype=np.uint8)
+
+        lower_gold_soft = np.array([18, 60, 140], dtype=np.uint8)
+        upper_gold_soft = np.array([45, 200, 255], dtype=np.uint8)
+
         mask_white = cv2.inRange(hsv, lower_white, upper_white)
-        mask_gold = cv2.inRange(hsv, lower_gold, upper_gold)
+        mask_gold_strong = cv2.inRange(hsv, lower_gold_strong, upper_gold_strong)
+        mask_gold_soft = cv2.inRange(hsv, lower_gold_soft, upper_gold_soft)
 
-        # 合并
-        mask = cv2.bitwise_or(mask_white, mask_gold, mask_gold1)
+        mask_gold = cv2.bitwise_or(mask_gold_strong, mask_gold_soft)
+        mask = cv2.bitwise_or(mask_gold, mask_white)
 
-        # 形态学闭运算（防止数字断裂）
         kernel = np.ones((2, 2), np.uint8)
         mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
 
-        # OCR 通常喜欢 黑字白底
-        output = cv2.bitwise_not(mask)
+        mask = cv2.bitwise_not(mask)
 
-        return cv2.cvtColor(output, cv2.COLOR_GRAY2BGR)
+        return cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
 
     def click_with_alt(self, x: float | Box | List[Box] = -1, y: float = -1, move_back: bool = False, name: str | None = None, interval: int = -1, move: bool = True, down_time: float = 0.01, after_sleep: float = 0, key: str = 'left'):
         self.send_key_down("alt")
@@ -190,8 +182,9 @@ class BaseEfTask(BaseTask):
         max_step=100,
         min_step=20,
         slow_radius=200,
+        once_time=1,
         tolerance=TOLERANCE,
-        ocr_frame_processor=isolate_white_yellow_text
+        ocr_frame_processor=None
     ):
         """
         Aligns a target detected by OCR or image feature to the center of the screen.
@@ -229,6 +222,7 @@ class BaseEfTask(BaseTask):
         sum_dx=0
         sum_dy=0
         for i in range(max_time):
+            start_action_time = time.time()
             if ocr:
                 # 使用OCR模式识别目标，设置超时时间为2秒，并启用日志记录
                 start_time = time.time()
@@ -246,6 +240,7 @@ class BaseEfTask(BaseTask):
                         break
                     time.sleep(0.1)
             else:
+                self.sleep(0.5)  # 等待界面更新
                 if isinstance(ocr_match_or_feature_name_list, str):
                     ocr_match_or_feature_name_list = [ocr_match_or_feature_name_list]
                 start_time = time.time()
@@ -253,9 +248,11 @@ class BaseEfTask(BaseTask):
                 while True:
                     if time.time() - start_time >= 2:
                         break
+                    self.next_frame()
                     for feature_name in ocr_match_or_feature_name_list:
                         if time.time() - start_time >= 2:
                             break
+                        
                         result = self.find_feature(
                             feature_name=feature_name,
                             threshold=threshold,
@@ -353,7 +350,8 @@ class BaseEfTask(BaseTask):
                         success = False
                         random_move_count = 0
 
-                # OCR 成功后不需要处理，下一次失败仍然随机
+            if time.time() - start_action_time < once_time:
+                self.sleep(once_time - (time.time() - start_action_time))# OCR 成功后不需要处理，下一次失败仍然随机
             if not scroll_bool and need_scroll:
                 scroll_bool=True
                 # cx = int(self.width * 0.5)

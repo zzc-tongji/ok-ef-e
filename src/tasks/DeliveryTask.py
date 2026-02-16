@@ -8,7 +8,7 @@ user32 = ctypes.windll.user32
 
 from src.tasks.BaseEfTask import BaseEfTask
 
-on_zip_line_tip = ["移动鼠标", "选择前进目标", "向目标移动", "离开滑索架"]
+on_zip_line_tip = ["向目标移动", "离开滑索架"]
 on_zip_line_stop = [re.compile(i) for i in on_zip_line_tip]
 continue_next = re.compile("下一连接点")
 secondary_objective_direction_dot = ["secondary_objective_direction_dot", "secondary_objective_direction_dot_light",
@@ -20,22 +20,23 @@ class DeliveryTask(BaseEfTask):
         super().__init__(*args, **kwargs)
         self.default_config = {"_enabled": True}
         self.name = "自动送货"
-        self.description = "仅武陵7.31w送货,教程视频 BV1LLc7zFEF9 目前深色滤镜下干员别礼,赛希送货效果较好"
+        self.description = "仅武陵7.31w送货,教程视频 BV1LLc7zFEF9 目前干员别礼,赛希送货效果较好"
         self.ends = ["常沄", "资源", "彦宁", "齐纶"]
         self.config_description = {
             '选择测试对象': "默认是无，表示正常执行送货任务\n也可以选择特定的滑索分叉序列来测试滑索功能\n选择完整循环测试则会依次测试每个送货目标的完整流程\n(需要锁定次要任务在送货任务上或附近)",
         }
         self.default_config.update(
             {
-                "教程": "https://www.bilibili.com/video/BV1LLc7zFEF9",
+                "功能教程": """https://www.bilibili.com/video/BV1LLc7zFEF9\n分叉终点的滑索的高度最好要低于或等于分叉点滑索的高度\n角色的虚化机制导致拉近视角后头发无法有效遮挡背景以提高识别率""",
                 "通向送货点": "36,14",
                 "常沄": "14,108,64,109,60",
                 "资源": "14,108,64,109",
                 "彦宁": "14,108,64,108,59",
                 "齐纶": "14,108,106",
+                "是否启用滚动放大视角": True,
                 "仅接取": False,
                 "仅送货": False,
-                "选择测试对象": "无"
+                "选择测试对象": "无",
             }
         )
         self.config_type["选择测试对象"] = {
@@ -253,16 +254,28 @@ class DeliveryTask(BaseEfTask):
 
     def zip_line_list_go(self, zip_line_list):
         for zip_line in zip_line_list:
-            self.align_ocr_or_find_target_to_center(re.compile(str(zip_line)), is_num=True)
+            self.align_ocr_or_find_target_to_center(
+                re.compile(str(zip_line)),
+                is_num=True,
+                need_scroll=self.config.get("是否启用滚动放大视角"),
+                ocr_frame_processor=self.isolate_white_yellow_text,
+                max_time=100,
+                tolerance=20,
+            )
             self.log_info(f"成功将滑索调整到{zip_line}的中心")
             self.click(after_sleep=0.5)
-            result = None
             start = time.time()
-            while not result: 
-                self.send_key("e")
+            while True:
                 self.next_frame()
-                result = self.ocr(match=on_zip_line_stop, box="bottom", log=True)
+                self.send_key("e")
                 self.sleep(0.1)
+                result = self.ocr(
+                    match=on_zip_line_stop,
+                    box="bottom",
+                    log=True,
+                )
+                if result:
+                    break
                 if time.time() - start > 60:
                     raise Exception("滑索超时，强制退出")
         self.sleep(1)
@@ -330,10 +343,11 @@ class DeliveryTask(BaseEfTask):
                 self.send_key("f", after_sleep=2)
                 self.align_ocr_or_find_target_to_center(
                     ocr_match_or_feature_name_list=secondary_objective_direction_dot,
-                    threshold=0.7,
+                    threshold=0.8,
                     ocr=False,
                     max_time=40,
-                    raise_if_fail=False
+                    raise_if_fail=False,
+                    need_scroll=self.config.get("是否启用滚动放大视角"),
                 )
                 self.click(key="right")
             for i in range(40):
@@ -344,6 +358,7 @@ class DeliveryTask(BaseEfTask):
                     threshold=0.7,
                     only_x=True,
                     ocr=False,
+                    need_scroll=self.config.get("是否启用滚动放大视角"),
                 )
                 self.move_keys(
                     "w",
@@ -365,9 +380,10 @@ class DeliveryTask(BaseEfTask):
             self.send_key("f")
             self.align_ocr_or_find_target_to_center(
                 ocr_match_or_feature_name_list=secondary_objective_direction_dot,
-                threshold=0.6,
+                threshold=0.8,
                 ocr=False,
                 raise_if_fail=False,
+                need_scroll=self.config.get("是否启用滚动放大视角"),
             )
             self.click(key="right")
         for i in range(40):
@@ -375,9 +391,10 @@ class DeliveryTask(BaseEfTask):
             self.send_key("v")
             self.align_ocr_or_find_target_to_center(
                 ocr_match_or_feature_name_list=secondary_objective_direction_dot,
-                threshold=0.6,
+                threshold=0.8,
                 only_x=True,
                 ocr=False,
+                need_scroll=True,
             )
             self.move_keys(
                 "w",
@@ -400,6 +417,10 @@ class DeliveryTask(BaseEfTask):
     #         zip_line_list = [int(i) for i in zip_line_list_str.split(",")]
     #         self.zip_line_list_go(zip_line_list)
     def run(self):
+        if not self._logged_in:
+            self.ensure_main(time_out=240)
+        else:
+            self.ensure_main()
         if self.config.get("选择测试对象") == "无":
             for _ in range(3):
                 if self.config.get("仅接取"):
