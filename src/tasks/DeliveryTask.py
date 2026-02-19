@@ -3,6 +3,7 @@ import re
 import time
 
 from src.interaction.Mouse import active_and_send_mouse_delta
+from src.image.hsv_config import HSVRange as hR
 
 user32 = ctypes.windll.user32
 
@@ -275,7 +276,10 @@ class DeliveryTask(BaseEfTask):
                 re.compile(str(zip_line)),
                 is_num=True,
                 need_scroll=self.config.get("是否启用滚动放大视角"),
-                ocr_frame_processor_list=[self.isolate_gold_text, self.isolate_white_text],
+                ocr_frame_processor_list=[
+                    self.make_hsv_isolator(hR.GOLD_TEXT),
+                    self.make_hsv_isolator(hR.WHITE),
+                ],
                 max_time=100,
                 tolerance=20,
             )
