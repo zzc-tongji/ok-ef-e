@@ -851,10 +851,6 @@ class WindowsScheduleManager:
         <WeeksInterval>1</WeeksInterval>
         <DaysOfWeek>
           <Monday />
-          <Tuesday />
-          <Wednesday />
-          <Thursday />
-          <Friday />
         </DaysOfWeek>
       </ScheduleByWeek>
     </CalendarTrigger>"""
