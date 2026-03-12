@@ -116,6 +116,7 @@ config = {
         ["src.tasks.DeliveryTask", "DeliveryTask"],
         ["src.tasks.EssenceScanTask", "EssenceScanTask"],
         ["src.tasks.BattleTask", "BattleTask"],
+        ["src.tasks.Test","Test"],
         ["src.tasks.PeriodicScreenshotTask", "PeriodicScreenshotTask"],
         ["ok.task.DiagnosisTask", "DiagnosisTask"],
     ],
