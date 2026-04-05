@@ -68,7 +68,7 @@ class DailyRoutineMixin(LiaisonMixin, Common):
         self.wait_click_ocr(match=re.compile("信用交易所"), box=self.box.top, time_out=5, recheck_time=1)
         result = self.wait_click_ocr(match=[re.compile("收取信用"), re.compile("无待领取信用")],
                                      box=self.box.bottom_left,
-                                     time_out=7)
+                                     time_out=7,recheck_time=1)
         if not result:
             self.log_info("未找到可收取信用或无待领取信用的选项")
             return False
@@ -133,10 +133,13 @@ class DailyRoutineMixin(LiaisonMixin, Common):
                     self.wait_ui_stable(refresh_interval=1)
 
             self.click(result)
-            self.click_confirm(time_out=5,after_sleep=2)
+            self.click_confirm(time_out=5,after_sleep=2, recheck_time=1)
             if not self.ensure_in_friend_boat():
                 self.log_info("未能进入好友帝江号")
-                return False
+                if self.wait_click_ocr(match=re.compile("选择拜访"), box=self.box.top_left, time_out=1):
+                    continue
+                else:
+                    return False
             self.sleep(2)
             actions = []
             if left_exchange_time > 0:

@@ -164,6 +164,7 @@ class LiaisonMixin(NavigationMixin):
 
         self.log_info("前往中央环厅可能失败，尝试后续操作")
         return True
+
     def navigate_to_operator_liaison_station(self):
         """
         自动导航到干员联络站。
@@ -172,6 +173,7 @@ class LiaisonMixin(NavigationMixin):
             LiaisonResult | bool
         """
         self.log_info("开始前往干员联络站")
+        self.ensure_main()
         self.ensure_map()
         self.log_info("打开地图界面")
 
