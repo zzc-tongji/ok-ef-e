@@ -66,6 +66,13 @@ config = {
             'use_npu': True,
         }
     },
+    'template_tab': {
+        # 是否生成标签枚举
+        'generate_label_enum': True,
+
+        # 标签枚举的相对路径
+        'label_enum_relative_path': 'src/data/FeatureList',
+    },
     "windows": {  # Windows游戏请填写此设置
         "exe": ["Endfield.exe"],
         # 'hwnd_class': 'UnrealWindow', #增加重名检查准确度
