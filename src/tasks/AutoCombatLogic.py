@@ -84,6 +84,7 @@ class AutoCombatLogic:
                         break
                 if no_battle:
                     self._normal_attack_hold_enabled = False
+                    self._sync_normal_attack_hold()
                     task.sleep(0.5)
                     continue
                 task.approach_enemy()
