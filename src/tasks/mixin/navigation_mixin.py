@@ -150,7 +150,7 @@ class NavigationMixin(BaseEfTask):
             back_prev: True时对中完成后返回上一个窗口
             raise_if_fail: True时对中失败抛出异常，False时返回False
             is_num: 数字型目标Y坐标微调（用于识别数字时的位置校正）
-            need_scroll: True时在对中过程中自动滚动（通常用于列表)
+            need_scroll: True时在对中过程中自动滚动放大视角（常用于滑索数字对中/列表滚动两类UI）
             max_step: 单次移动最大步长(像素)
             min_step: 单次移动最小步长(像素)
             slow_radius: 接近目标时减速的半径范围(像素)
@@ -342,7 +342,8 @@ class NavigationMixin(BaseEfTask):
                 # cy = int(self.height * 0.5)
                 for _ in range(6):
                     # self.scroll(cx, cy, 8)
-                    pyautogui.scroll(20)
+                    # 20 在实测中放大幅度偏小，提升到 80 以便更快拉近视角提高对中可见性
+                    pyautogui.scroll(80)
                     self.sleep(1)
         if raise_if_fail:
             raise Exception("对中失败")

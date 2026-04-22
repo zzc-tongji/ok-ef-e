@@ -85,9 +85,35 @@ class RuntimeMixin:
                                     template, match_method, screenshot, mask_function, frame, limit, target_height)
 
     def scroll(self, x: int, y: int, count: int) -> None:
+        """按屏幕绝对像素坐标滚轮。
+
+        Args:
+            x: 滚动位置的绝对像素 X 坐标
+            y: 滚动位置的绝对像素 Y 坐标
+            count: 滚动量。
+                正数（向上滚动）：地图 UI 放大视角 / 列表 UI 向上翻页显示靠前内容。
+                负数（向下滚动）：地图 UI 缩小视角或向下平移 / 列表 UI 向下翻页显示靠后内容。
+
+        适用场景：
+        - 地图 UI：已确定地图中心/图标附近的像素坐标时，精确缩放或平移视角。
+        - 列表 UI：已通过 OCR/特征拿到某一行条目的绝对坐标时，在该条目处滚动翻页。
+        """
         run_at_window_pos(self.hwnd.hwnd, super().scroll, x, y, 0.5, x, y, count)
 
     def scroll_relative(self, x: float, y: float, count: int) -> None:
+        """按屏幕相对坐标比例滚轮（x/y 范围 0~1）。
+
+        Args:
+            x: 滚动位置的相对 X 坐标（0~1，0 为左边缘，1 为右边缘）
+            y: 滚动位置的相对 Y 坐标（0~1，0 为上边缘，1 为下边缘）
+            count: 滚动量。
+                正数（向上滚动）：地图 UI 放大视角 / 列表 UI 向上翻页显示靠前内容。
+                负数（向下滚动）：地图 UI 缩小视角或向下平移 / 列表 UI 向下翻页显示靠后内容。
+
+        适用场景：
+        - 地图 UI：用 (0.5, 0.5) 等比例坐标在地图中心连续缩放，适配不同分辨率。
+        - 列表 UI：在固定相对区域（如左侧列表 0.1/0.5）滚动查找条目，避免硬编码像素。
+        """
         run_at_window_pos(self.hwnd.hwnd, super().scroll_relative, int(x * self.width), int(y * self.height), 0.5, x,
                           y, count)
 
