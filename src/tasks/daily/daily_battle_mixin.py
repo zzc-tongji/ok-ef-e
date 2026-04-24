@@ -411,13 +411,13 @@ class DailyBattleMixin(MapMixin, ZipLineMixin, BattleMixin, Common):
 
     def battle_recycle(self, left_ticket, stage_name, category_name, enter_str, no_battle=False, challenge_check=False):
         enter_bool = False
-        # 根据 enter_str 决定点击位置，如果是「挑战」，则点击右下四分之一区域，避免误触
-        enter_box = self.box.bottom_right_quarter if enter_str == "挑战" else self.box.bottom_right
         while left_ticket > 0:
             if enter_bool:
                 self.wait_click_ocr(match=re.compile("重新挑战"), box=self.box.bottom_left, log=True, time_out=5,
                                     after_sleep=2, recheck_time=1)
             else:
+                # 根据 enter_str 决定点击位置，如果是「挑战」，则点击右下四分之一区域，避免误触
+                enter_box = self.box.bottom_right_quarter if enter_str == "挑战" else self.box.bottom_right
                 self.wait_click_ocr(match=re.compile(enter_str), time_out=10, after_sleep=2, box=enter_box,
                                     log=True, recheck_time=1)
                 enter_bool = True
