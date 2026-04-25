@@ -10,7 +10,7 @@
 <h1 align="center">ok-ef</h1>
 
 <p>
-An image-recognition-based automation tool for End Field, some actions support background mode, developed with <a href="https://github.com/ok-oldking/ok-script">ok-script</a>.
+An image-recognition-based automation tool for End Field, some actions support background mode, developed with <a href="https://github.com/alicejump/ok-script">ok-script</a>.
 <br />
 Automates parts of End Field via screen recognition and simulated user inputs.
 </p>
@@ -22,8 +22,8 @@ Automates parts of End Field via screen recognition and simulated user inputs.
 <div align="center">
 
 ![Platform](https://img.shields.io/badge/platform-Windows-blue)
-[![GitHub release](https://img.shields.io/github/v/release/ok-oldking/ok-end-field)](https://github.com/ok-oldking/ok-end-field/releases)
-[![Total downloads](https://img.shields.io/github/downloads/ok-oldking/ok-end-field/total)](https://github.com/ok-oldking/ok-end-field/releases)
+[![GitHub release](https://img.shields.io/github/v/release/alicejump/ok-end-field)](https://github.com/alicejump/ok-end-field/releases)
+[![Total downloads](https://img.shields.io/github/downloads/alicejump/ok-end-field/total)](https://github.com/alicejump/ok-end-field/releases)
 [![Discord](https://img.shields.io/discord/296598043787132928?color=5865f2&label=%20Discord)](https://discord.gg/vVyCatEBgA)
 
 </div>
@@ -66,7 +66,7 @@ all potential risks.**
 
 ## 📥 Download Sources
 
-* **[GitHub](https://github.com/ok-oldking/ok-end-field/releases)**: Official release page with fast global access. (*
+* **[GitHub](https://github.com/alicejump/ok-end-field/releases)**: Official release page with fast global access. (*
   *Download the `setup.exe` installer, not the `Source Code` archive**)
 * **[Mirrorchyan](https://mirrorchyan.com/zh/projects?rid=ok-end-field&source=ok-ef-readme)**: China mirror (may require
   a CD-KEY purchase).
