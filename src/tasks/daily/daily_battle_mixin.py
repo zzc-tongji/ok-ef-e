@@ -460,13 +460,14 @@ class DailyBattleMixin(MapMixin, ZipLineMixin, BattleMixin, Common):
         else:
             self.wait_click_ocr(match=re.compile("重新挑战"), box=enter_box, log=True, time_out=5,
                                 after_sleep=2, recheck_time=1)
+        return True
 
     def battle_recycle(self, left_ticket, stage_name, category_name, enter_str, no_battle=False, challenge_check=False, nums_extra_run=0):
         enter_bool = False
         cnt_extra_run = 0
         is_extra_mode = False
         # 根据 enter_str 决定点击位置, 如果是「挑战」, 并且刷取的是「能量淤积点」, 则点击右下四分之一区域, 避免误触
-        enter_box = self.box.bottom_right_quarter if enter_str == "挑战" and stage_name == "能量淤积点" else self.box.bottom_right
+        enter_box = self.box.bottom_right_quarter if enter_str == "挑战" and category_name == "能量淤积点" else self.box.bottom_right
         if nums_extra_run > 0:
             assert category_name == "能量淤积点", "体力刷完后继续刷功能仅支持能量淤积点"
             assert challenge_check, "体力刷完后继续刷功能仅支持挑战模式"
