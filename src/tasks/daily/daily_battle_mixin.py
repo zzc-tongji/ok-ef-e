@@ -392,7 +392,7 @@ class DailyBattleMixin(MapMixin, ZipLineMixin, BattleMixin, Common):
         #
         self.navigate_until_target(target_ocr_pattern=re.compile("激发|放弃"), nav_feature_name=fL.gather_icon_out_map, time_out=60)
         #
-        if self.wait_ocr(match=re.compile("放弃"), box=self.box.bottom_right, time_out=5):
+        if self.wait_ocr(match=re.compile("放弃"), box=self.box.bottom_right, time_out=1):
             self.log_info("放弃未领取的奖励")
             self.wait_click_ocr(match=re.compile("放弃"), box=self.box.bottom_right, time_out=5, recheck_time=1, alt=True)
             self.wait_click_ocr(match=re.compile("确认"), box=self.box.bottom_right, time_out=5)
