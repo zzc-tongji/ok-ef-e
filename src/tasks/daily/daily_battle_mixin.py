@@ -464,7 +464,7 @@ class DailyBattleMixin(MapMixin, ZipLineMixin, BattleMixin, Common):
             self.click_with_alt(result[0], after_sleep=2)
             self.wait_click_ocr(match=re.compile("挑战"), time_out=10, after_sleep=2, box=enter_box,
                                 log=True, recheck_time=1)
-            self.wait_click_ocr(match=re.compile("确认"), time_out=10, after_sleep=2, box=enter_box,
+            self.wait_click_ocr(match=re.compile("确认"), time_out=10, after_sleep=2, box=self.box.bottom_right,
                                 log=True, recheck_time=1)
         else:
             self.wait_click_ocr(match=re.compile("重新挑战"), box=enter_box, log=True, time_out=5,
