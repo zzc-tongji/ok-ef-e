@@ -490,7 +490,7 @@ class DailyBattleMixin(MapMixin, ZipLineMixin, BattleMixin, Common):
                 self.wait_click_ocr(match=re.compile(enter_str), time_out=10, after_sleep=2, box=enter_box,
                                     log=True, recheck_time=1)
                 # 如果无体力，点击放弃领奖后需要点击确认
-                if nums_extra_run > 0:
+                if nums_extra_run > 0 and left_ticket < stages_cost[category_name]:
                     self.click_confirm()
                     self.log_info("无体力，开始额外刷取（放弃领奖）")
                     is_extra_mode = True
@@ -643,13 +643,18 @@ class DailyBattleMixin(MapMixin, ZipLineMixin, BattleMixin, Common):
             use_yolo = False
             search_box = None
             need_follow= True
-            for end_feature in end_feature_name:
-                if self.find_feature(
-                    end_feature,
-                    box=self.box_of_screen((1920 - 1550) / 1920, 150 / 1080, 1550 / 1920, (1080 - 150) / 1080),
-                ):
-                    need_follow = False
+            for i in range(9):
+                for end_feature in end_feature_name:
+                    if self.find_feature(
+                        end_feature,
+                        box=self.box_of_screen((1920 - 1550) / 1920, 150 / 1080, 1550 / 1920, (1080 - 150) / 1080),
+                    ):
+                        need_follow = False
+                        break
+                if not need_follow:
                     break
+                self.click(key="middle")
+                self.move_keys("aw", duration=0.1)
             # F8 索引
             if need_follow:
                 self._open_index()
