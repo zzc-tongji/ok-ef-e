@@ -1,5 +1,7 @@
 import re
 import time
+import os
+from datetime import datetime
 
 import cv2
 import numpy as np
@@ -22,7 +24,6 @@ class GameFlowMixin:
     def login_ocr(self, x=0, y=0, to_x=1, to_y=1, match=None, width=0, height=0, box=None, name=None, threshold=0,
                   target_height=0, use_grayscale=False, log=False, frame_processor=None, lib='default', need_active=True):
         img = self.login_screenshot(need_active=need_active)
-
         if not isinstance(img, np.ndarray):
             img = np.array(img)
         return super().ocr(
