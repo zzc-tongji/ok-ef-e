@@ -693,6 +693,7 @@ class DailyBattleMixin(MapMixin, ZipLineMixin, BattleMixin, Common):
                     self.ensure_main()
                 else:
                     raise Exception("未找到追踪按钮")
+            self.click(key="middle", after_sleep=2)
         else:
             end_feature_name = "battle_end"
             use_yolo = True
@@ -703,7 +704,6 @@ class DailyBattleMixin(MapMixin, ZipLineMixin, BattleMixin, Common):
                 self.click(key="middle", after_sleep=2)
                 self.move_keys("aw", duration=0.1)
                 self.sleep(1)
-        self.click(key="middle", after_sleep=2)
         start_time = time.time()
         try:
             while self.align_ocr_or_find_target_to_center(end_feature_name, ocr=False, use_yolo=use_yolo, box=search_box,
