@@ -207,6 +207,12 @@ welcome to build their own automation projects with ok-script.
 
 ## ❤️ Sponsors & Acknowledgements
 
+### Contributors
+
+<a href="https://github.com/AliceJump/ok-end-field/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=AliceJump/ok-end-field" />
+</a>
+
 ### Sponsors
 
 * **EXE signing**: Free code signing provided by [SignPath.io](https://signpath.io/), certificate
