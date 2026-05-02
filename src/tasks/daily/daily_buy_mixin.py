@@ -26,7 +26,9 @@ class DailyBuyMixin(Common):
                 "是否购买「人文物产」。"
             ),
         })
-
+        self.default_config_group.update({
+            "⭐买物资": ["购物白名单", "是否买礼物"], 
+        })
 
     def buy_staple_goods(self):
         self.info_set("current_task", "buy_staple_goods")

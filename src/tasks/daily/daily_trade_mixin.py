@@ -42,6 +42,19 @@ class DailyTradeMixin(NavigationMixin, Common):
             **buy_sell_desc_dict,
         })
 
+        # 关键：把你要折叠的子项挂到父项下
+        grouped_children = ["只买不卖"]
+        for area in areas_list:
+            grouped_children.extend([
+                area,
+                f"{area}买入价",
+                f"{area}卖出价",
+            ])
+
+        self.default_config_group.update({
+            "⭐买卖货": grouped_children
+        })
+
     def collect_market_goods_info(self):
         def ocr_stock_quantity() -> int:
             stock_piece = self.ocr(

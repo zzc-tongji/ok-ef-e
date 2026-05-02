@@ -33,7 +33,9 @@ class DailyLiaisonMixin(LiaisonMixin):
                 "确认不会自动存可用道具导致治疗药被存入后再开启"
             ),
         })
-
+        self.default_config_group.update({
+            "⭐送礼": ["送礼任务最多尝试次数", "优先送礼对象"],
+        })
     def execute_gift_to_liaison(self):
         """传送至帝江号后执行联络与送礼链路。"""
         self.log_info("传送至帝江号指定点")

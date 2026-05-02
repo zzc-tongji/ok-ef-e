@@ -81,6 +81,11 @@ class DailyRoutineMixin(LiaisonMixin, Common):
                 "是否领取「行动手册/日常」和「通行证」中的奖励。"
             ),
         })
+        self.default_config_group.update({
+            "⭐据点兑换": ["交易货品优先序列"],
+            "⭐收信用": ["尝试仅收培育室"],
+            "⭐帝江号收菜": ["收集线索", "制造舱", "培养舱"]
+        })
     def make_simply(self):
         self.info_set("current_task", "make_simply")
         self.transfer_to_home_point(should_check_out_boat=True)
