@@ -47,12 +47,16 @@ class DailyTradeMixin(NavigationMixin, Common):
         for area in areas_list:
             grouped_children.extend([
                 area,
+            ])
+        area_grouped_children = {}
+        for area in areas_list:
+            area_grouped_children[area] = [
                 f"{area}买入价",
                 f"{area}卖出价",
-            ])
-
+            ]
         self.default_config_group.update({
-            "⭐买卖货": grouped_children
+            "⭐买卖货": grouped_children,
+            **area_grouped_children
         })
 
     def collect_market_goods_info(self):

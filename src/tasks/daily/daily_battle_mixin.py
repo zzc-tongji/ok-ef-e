@@ -55,13 +55,15 @@ class DailyBattleMixin(MapMixin, ZipLineMixin, BattleMixin, Common):
             {
                 "⭐刷体力": [
                     "消耗限时体力药",
-                    "体力本",
-                    self.CFG_STAGE_REWARD_TIER,
-                    "刷体力开始日期",
-                    "刷本序列",
-                    "仅站桩",
-                    "体力刷完后继续刷取次数",
-                    self.CFG_SCROLL_ENABLE,
+                    "体力本配置",
+                    # 如果要把 gather_list 里的 key 也折叠
+                    "战斗相关选项",
+                    "淤积点相关选项",
+                ],
+                "体力本配置": ["体力本", self.CFG_STAGE_REWARD_TIER, "刷体力开始日期", "刷本序列"],
+                "淤积点相关选项": ["仅站桩", "体力刷完后继续刷取次数", self.CFG_SCROLL_ENABLE]
+                + [key for key in gather_list],
+                "战斗相关选项": [
                     "技能释放",
                     "启动技能点数",
                     "后台结束战斗通知",
@@ -69,9 +71,7 @@ class DailyBattleMixin(MapMixin, ZipLineMixin, BattleMixin, Common):
                     "进入战斗后的初始等待时间",
                     "启用排轴",
                     "排轴序列",
-                    # 如果要把 gather_list 里的 key 也折叠
-                    *gather_list,
-                ]
+                ],
             }
         )
 
