@@ -236,6 +236,7 @@ class DailyRoutineMixin(LiaisonMixin, Common):
         stage_area = self.ocr(match=re.compile("暂存区"), box=self.box.top_left)
         if len(stage_area) > 0:
             self.click(x=stage_area[0].x, y=stage_area[0].y+int(self.height*0.25))
+            self.wait_click_ocr(match=re.compile("全部领取"), box=self.box.center, time_out=5)
             self.wait_pop_up(after_sleep=2)
         #
         if self.wait_click_ocr(
