@@ -235,7 +235,7 @@ class DailyRoutineMixin(LiaisonMixin, Common):
         #
         stage_area = self.ocr(match=re.compile("暂存区"), box=self.box.top_left)
         if len(stage_area) > 0:
-            self.click(x=stage_area[0].x, y=stage_area[0].y+self.height*0.25)
+            self.click(x=stage_area[0].x, y=stage_area[0].y+int(self.height*0.25))
             self.wait_pop_up(after_sleep=2)
         #
         if self.wait_click_ocr(
@@ -419,9 +419,12 @@ class DailyRoutineMixin(LiaisonMixin, Common):
         self.wait_click_ocr(
             match=outpost_name,
             box=self.box.top,
-            time_out=5
+            time_out=5,
+            after_sleep=1
         )
-
+        self.wait_ocr(
+            match=re.compile("货品"), box=self.box_of_screen(1700 / 1920, 610 / 1080, 1, 710 / 1080), time_out=5
+        )
         can_exchange_goods = goods_dict.get(
             get_area_by_outpost_name(outpost_name), []
         )
