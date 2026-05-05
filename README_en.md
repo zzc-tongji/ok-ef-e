@@ -109,7 +109,7 @@ all potential risks.**
 ## Runtime Requirements & Recommendations
 
 - OS: Windows
-- Game resolution: 16:9 recommended (1920×1080 optimal), minimum 1280×720
+- Game resolution: 16:9 recommended (1920×1080 optimal), minimum 1600×900 (lower resolutions may cause recognition/positioning failures)
 - Language: some features currently support Simplified Chinese only
 - Privilege: run as Administrator recommended (required for source mode)
 - Path: prefer pure-English install/runtime path
@@ -147,6 +147,9 @@ If you encounter issues, check the following in order:
 This project supports **Python 3.12 only**. Run CMD, PyCharm, or VSCode as **Administrator**.
 
 ```bash
+# If your first clone did not include submodules, initialize them first
+git submodule update --init --recursive
+
 # Install or update dependencies
 pip install -r requirements.txt --upgrade
 
