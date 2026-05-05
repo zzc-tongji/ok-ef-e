@@ -1,4 +1,4 @@
-ok-script @ http://47.101.59.109:12000/ok_script-1.0.109%2Bpatch1-py3-none-any.whl
+ok-script-aj-patch==1.0.109.post3
 onnxocr-ppocrv4==0.0.5
 openvino
 opencv-python

@@ -4,7 +4,7 @@
 #
 #    pip-compile '.\requirements.in'
 #
-ok-script @ http://47.101.59.109:12000/ok_script-1.0.109%2Bpatch1-py3-none-any.whl
+ok-script-aj-patch==1.0.109.post3
     # via -r .\requirements.in
 playwright==1.57.0
 onnxocr-ppocrv5==0.0.14
@@ -14,7 +14,7 @@ pyappify==1.0.2
 certifi==2025.7.14
     # via requests
 charset-normalizer==3.4.2
-    # via requests
+    # via requests65
 comtypes==1.4.11
     # via pycaw
 darkdetect==0.8.0
