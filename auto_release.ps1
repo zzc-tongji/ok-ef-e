@@ -267,6 +267,19 @@ if ($response -ieq "n") {
 }
 
 Write-Host ""
+Write-Host "⟳ 拉取远程最新提交..." -ForegroundColor Cyan
+
+git pull --rebase 2>&1 | Out-Null
+
+if ($LASTEXITCODE -ne 0) {
+
+    Write-Host "✗ 拉取失败（可能存在冲突）" -ForegroundColor Red
+    exit 1
+}
+
+Write-Host "✓ 已同步远程提交" -ForegroundColor Green
+
+Write-Host ""
 Write-Host "⟳ 推送最新 commit..." -ForegroundColor Cyan
 
 git push 2>&1 | Out-Null
